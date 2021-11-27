@@ -5,16 +5,12 @@ import java.util.*;
 public class AI {
 
     ArrayList<InputLayer>layers;
-    Double trueValue=1.05;
-    Double passiveValue=1.012;
-    Double wrongValue=0.95;
     boolean isTraining;
     long trainingCounter=0;
     long overlap=0;
-    Double bestPerformanceX =0.0;
-    Double bestPerformanceY =0.0;
+    Double bestPerformance =0.0;
     Double currentPerformance=0.0;
-    Double testCases=1000.0;
+    Double testCases=100.0;
     Double testLossCounter=0.0;
     Double testWinCounter=0.0;
     Brain brain;
@@ -30,82 +26,27 @@ public class AI {
         this.isTraining=true;
         BackgroundTrainer backgroundTrainer= new BackgroundTrainer();
         backgroundTrainer.start();
-       // BackgroundTester backgroundTester = new BackgroundTester();
-        //backgroundTester.start();
     }
-
-//    public void train(ArrayList<Integer>moves,ArrayList<Board>movesHistory)
-//    {
-//        int turn=0;
-//        ArrayList<InputLayer>inputLayerRollback= new ArrayList<>(Arrays.asList(new InputLayer[9]));
-//        Collections.copy(inputLayerRollback,layers);
-//        for (Integer move : moves)
-//        {
-//            ArrayList<Double>trainweights=new ArrayList<>(Arrays.asList(new Double[]{wrongValue,wrongValue,wrongValue,wrongValue,wrongValue,wrongValue,wrongValue,wrongValue,wrongValue}));
-//            if(move>=0) {
-//                if(turn%2==1) {
-//                    trainweights.set(move, trueValue);
-//                    Board board = movesHistory.get(turn);
-//                    for(int i =0;i<board.getBoard().size();i++)
-//                    {
-//                        if(i!=move)
-//                        {
-//                            if(board.getBoard().get(i).getValue().equals("o")) {
-//                                trainweights.set(i, passiveValue);
-//                            }
-//                        }
-//                    }
-//                    layers.get(turn).updateWeights(trainweights);
-//                    test();
-//                    if(currentPerformance> bestPerformanceX)
-//                    {
-//                        bestPerformanceX =currentPerformance;
-//                        System.out.println("Current perf X:"+ bestPerformanceX);
-//                    }else
-//                    {
-//                        Collections.copy(layers,inputLayerRollback);
-//                    }
-//                }else
-//                {
-//                    trainweights.set(move, trueValue);
-//                    Board board = movesHistory.get(turn);
-//                    for(int i =0;i<board.getBoard().size();i++)
-//                    {
-//                        if(i!=move)
-//                        {
-//                            if(board.getBoard().get(i).getValue().equals("x")) {
-//                                trainweights.set(i, passiveValue);
-//                            }
-//                        }
-//                    }
-//                    layers.get(turn).updateWeights(trainweights);
-//                    test();
-//                    if(currentPerformance> bestPerformanceY)
-//                    {
-//                        bestPerformanceY =currentPerformance;
-//                        System.out.println("Current perf Y:"+ bestPerformanceX);
-//                    }else
-//                    {
-//                        Collections.copy(layers,inputLayerRollback);
-//                    }
-//                }
-//            }
-//            turn++;
-//        }
-//        //System.out.println("Finished testing");
-//    }
 
     public void trainBrain(ArrayList<Integer>moves,ArrayList<Board>movesHistory)
     {
         int turn=0;
-        String game="";
+        String game;
         for (Integer move : moves)
         {
-            game+=movesHistory.get(turn);
-            brain.learn(game,move);
+            if(move>=0) {
+                game = movesHistory.get(turn).getLineBoard();
+                brain.learn(game, move,true);
+            }
             turn++;
         }
         //System.out.println("Finished testing");
+    }
+
+    public void trainBrainLoss(ArrayList<Integer>moves,ArrayList<Board>movesHistory)
+    {
+                String game = movesHistory.get(movesHistory.size()-2).getLineBoard();
+                brain.learn(game, moves.get(moves.size()-1),false);
     }
 
 
@@ -121,16 +62,14 @@ public class AI {
         testLossCounter=0.0;
     }
 
-    public ArrayList<Double> predict(int move)
-    {
-        ArrayList<Double>weights;
-        weights= layers.get(move).getWeights();
-        return weights;
-    }
-
     public ArrayList<Integer> predictBrain(String game)
     {
-        return brain.remember(game);
+        HashSet<Integer> hash=brain.remember(game);
+        if(hash==null)
+        {
+            hash= new HashSet<>();
+        }
+        return new ArrayList<>();
     }
 
     public void simulateGameBrain(boolean isTest)
@@ -139,32 +78,9 @@ public class AI {
         String result;
         while((result=board.validateWinner()).length()==0)
         {
-            String game="";
-            for(Board b: board.getBoardHistory())
-            {
-                game+=b.printBoard(true);
-            }
-            ArrayList<Integer>moves = predictBrain(game);
-            int choice = -1;
-            boolean isValid;
-            if(moves!=null && !moves.isEmpty()) {
-                choice = new Random().nextInt(moves.size());
-                isValid=board.makeMove(board.currentTurn,moves.get(choice));
-                moves.remove(choice);
-            }else
-            {
-                isValid = board.makeMove(board.currentTurn, new Random().nextInt(9));
-            }
-
+            boolean isValid = board.makeMove(board.currentTurn, new Random().nextInt(9));
             while (!isValid) {
-                if(moves!=null && !moves.isEmpty()) {
-                    choice = new Random().nextInt(moves.size());
-                    isValid = board.makeMove(board.currentTurn,moves.get(choice));
-                    moves.remove(choice);
-                }
-                else{
                     isValid = board.makeMove(board.currentTurn, new Random().nextInt(9));
-                }
             }
         }
         if (result.equals("x")){
@@ -172,14 +88,15 @@ public class AI {
             //System.out.println(board.getMoveXHistory());
             if(isTraining&&!isTest)
             {
-                trainBrain(board.getMoveXHistory(),board.getBoardHistory());
-                if(trainingCounter<999999999) {
-                    trainingCounter++;
-                }else
-                {
-                    trainingCounter=0;
-                    overlap++;
-                }
+                //System.out.println("X win: "+board.getLineBoard()+board.moveOHistory+board.moveXHistory);
+              //  trainBrain(board.getMoveXHistory(),board.getBoardHistory());
+//                if(trainingCounter<999999999) {
+//                    trainingCounter++;
+//                }else
+//                {
+//                    trainingCounter=0;
+//                    overlap++;
+//                }
 
             }
 
@@ -193,7 +110,7 @@ public class AI {
             //System.out.println(board.getMoveOHistory());
             if(isTraining && !isTest)
             {
-                trainBrain(board.getMoveXHistory(),board.boardHistory);
+                trainBrain(board.getMoveOHistory(),board.boardHistory);
                 if(trainingCounter<999999999) {
                     trainingCounter++;
                 }else
@@ -209,6 +126,9 @@ public class AI {
             }
         }else if(result.equals("d"))
         {
+            //System.out.println("Draw: "+board.getLineBoard()+board.moveOHistory+board.moveXHistory);
+            //trainBrain(board.getMoveXHistory(),board.boardHistory);
+            trainBrain(board.getMoveOHistory(),board.boardHistory);
             //System.out.println("It's a draw");
             if(isTest)
             {
@@ -216,6 +136,14 @@ public class AI {
             }
         }else
         {
+            trainBrainLoss(board.getMoveOHistory(),board.boardHistory);
+            if(trainingCounter<999999999) {
+                trainingCounter++;
+            }else
+            {
+                trainingCounter=0;
+                overlap++;
+            }
             if(isTest)
             {
                 testLossCounter++;
@@ -225,124 +153,39 @@ public class AI {
         //board.printBoardHistory();
     }
 
-//    public void simulateGame(boolean isTest)
-//    {
-//        Board board = new Board();
-//        String result="";
-//        while((result=board.validateWinner()).length()==0)
-//        {
-////            while (!board.makeMove(board.currentTurn,new Random().nextInt(9)))
-////            {
-////                //System.out.println("invalid move");
-////            }
-//            ArrayList<Double> weightsMoves= new ArrayList<>(Arrays.asList(new Double[9]));
-//            Collections.copy(weightsMoves,predict(board.turnCount));
-//            ArrayList<Double> orderedWeights = new ArrayList<>(Arrays.asList(new Double[9]));
-//            Collections.copy(orderedWeights,weightsMoves);
-//            Collections.sort(orderedWeights,Collections.reverseOrder());
-//
-//            boolean isValid=board.makeMove(board.currentTurn, weightsMoves.indexOf(orderedWeights.get(0)));
-//            orderedWeights.remove(0);
-//            while (!isValid) {
-//                if(!orderedWeights.isEmpty()) {
-//                    isValid = board.makeMove(board.currentTurn, weightsMoves.indexOf(orderedWeights.get(0)));
-//                    orderedWeights.remove(0);
-//                }
-//                else{
-//                    isValid = board.makeMove(board.currentTurn, new Random().nextInt(9));
-//                }
-//            }
-//        }
-//        if (result.equals("x")){
-//            //System.out.println("X won");
-//            //System.out.println(board.getMoveXHistory());
-//            if(isTraining&&!isTest)
-//            {
-//                trainBrain(board.getMoveXHistory(),board.getBoardHistory());
-//                if(trainingCounter<999999999) {
-//                    trainingCounter++;
-//                }else
-//                {
-//                    trainingCounter=0;
-//                    overlap++;
-//                }
-//
-//            }
-//
-//            if(isTest)
-//            {
-//                testLossCounter++;
-//            }
-//        }else if(result.equals("o"))
-//        {
-//            //System.out.println("O won");
-//            //System.out.println(board.getMoveOHistory());
-//            if(isTraining && !isTest)
-//            {
-//                trainBrain(board.getMoveXHistory(),board.boardHistory);
-//                if(trainingCounter<999999999) {
-//                    trainingCounter++;
-//                }else
-//                {
-//                    trainingCounter=0;
-//                    overlap++;
-//                }
-//            }
-//
-//            if(isTest)
-//            {
-//                testWinCounter++;
-//            }
-//        }else if(result.equals("d"))
-//        {
-//            //System.out.println("It's a draw");
-//            if(isTest)
-//            {
-//                testWinCounter++;
-//            }
-//        }else
-//        {
-//            if(isTest)
-//            {
-//                testLossCounter++;
-//            }
-//        }
-//        //board.printBoard();
-//        //board.printBoardHistory();
-//    }
-
-    public class BackgroundTrainer extends Thread
+    public void initTest()
     {
-        @Override
-        public void run()
+        test();
+        if(currentPerformance> bestPerformance)
         {
-            while (true)
-            {
-                simulateGameBrain(false);
-                if(trainingCounter%100000==0)
-                {
-                    System.out.println("Training reached "+trainingCounter+" times.");
-                    System.out.println("Current games in memory "+brain.getMemory().size());
-                }
-            }
+            bestPerformance =currentPerformance;
         }
+        System.out.println("Current perf:"+ bestPerformance);
+        //System.out.println("Done testing iteration");
     }
 
-    public class BackgroundTester extends Thread
+    public void initTraining()
     {
-        @SneakyThrows
-        @Override
-        public void run()
+        while (trainingCounter<1000000)
         {
-            while (true)
-            {
-                test();
-                if(currentPerformance> bestPerformanceY)
-                {
-                    bestPerformanceY =currentPerformance;
-                    System.out.println("Current perf:"+ bestPerformanceY);
-                }
-            }
+            simulateGameBrain(false);
+        }
+        //System.out.println("Training ran "+trainingCounter+" times.");
+        //System.out.println("Current games in memory "+brain.getMemory().size());
+        trainingCounter=0;
+    }
+
+    public void initTrainingAndTesting()
+    {
+        initTraining();
+        initTest();
+    }
+
+    public class BackgroundTrainer extends Thread{
+        @Override
+        public void run() {
+            while(true)
+            {initTrainingAndTesting();}
         }
     }
 }

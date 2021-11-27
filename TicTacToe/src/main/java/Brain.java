@@ -2,32 +2,53 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class Brain {
-    HashMap<String, ArrayList<Integer>>memory;
+    HashMap<String, HashSet<Integer>>memoryOffensive;
+    HashMap<String, HashSet<Integer>>memoryDefensive;
     public Brain()
     {
-        this.memory=new HashMap<>();
+        this.memoryOffensive=new HashMap<>();
+        this.memoryDefensive=new HashMap<>();
     }
 
-    public void learn(String game, int move)
+    public void learn(String game, int move,boolean isOffense)
     {
-        if(!this.memory.containsKey(game))
+        if(isOffense)
         {
-            ArrayList<Integer>moves = new ArrayList<>();
-            moves.add(move);
-            memory.put(game,moves);
+            learn(game,move,this.memoryOffensive);
         }else
         {
-            ArrayList<Integer>moves=memory.get(game);
-            moves.add(move);
-            memory.put(game,moves);
+            learn(game,move,this.memoryDefensive);
         }
     }
 
-    public ArrayList<Integer> remember(String game)
+    public void learn(String game, int move,HashMap<String, HashSet<Integer>>memory)
     {
-        return memory.get(game);
+        HashSet<Integer> moves;
+        if(!memory.containsKey(game))
+        {
+            //System.out.println(game);
+            moves = new HashSet<>();
+        }else
+        {
+            moves = memory.get(game);
+            //System.out.println("Game Found: "+game+" : "+moves.size());
+        }
+        moves.add(move);
+        memory.put(game,moves);
+    }
+
+    public HashSet<Integer> remember(String game)
+    {
+        HashSet<Integer>memoryDefensive=this.memoryDefensive.get(game);
+        if(memoryDefensive==null || memoryDefensive.isEmpty())
+        {
+            return this.memoryOffensive.get(game);
+        }
+        return memoryDefensive;
     }
 }

@@ -54,11 +54,11 @@ public class Board {
     
     public boolean makeMove(String value,int position)
     {
-        if(moveXHistory.isEmpty()&&moveOHistory.isEmpty())
-        {
-            boardHistory.add(copyBoard());
-        }
         if(validMove(position)) {
+            if(moveXHistory.isEmpty()&&moveOHistory.isEmpty())
+            {
+                boardHistory.add(copyBoard());
+            }
             board.set(position, new Space(value));
             boardHistory.add(copyBoard());
             if(value.equals("x"))
@@ -89,26 +89,79 @@ public class Board {
 
     public String validateWinner()
     {
-        ArrayList<String>winConditions=new ArrayList<>();
-        winConditions.add("www.{6}");
-        winConditions.add(".{3}www.{3}");
-        winConditions.add(".{6}www");
-        winConditions.add("w.{2}w.{2}w.{2}");
-        winConditions.add(".{1}w.{1}.{1}w.{1}.{1}w.{1}");
-        winConditions.add(".{2}w.{2}w.{2}w");
-        winConditions.add("w.{1}.{1}.{1}w.{1}.{1}.{1}w");
-        winConditions.add(".{1}.{1}w.{1}w.{1}w.{1}.{1}");
-
-        for (String winCondition : winConditions)
+        String b =this.getLineBoard();
+        //validate x
+        if(b.charAt(0)=='x'&&b.charAt(1)=='x'&&b.charAt(2)=='x')
         {
-            if(this.getLineBoard().replaceAll(winCondition.replaceAll("w","x"),"").length()==0)
-            {
-                return "x";
-            }else if(this.getLineBoard().replaceAll(winCondition.replaceAll("w","o"),"").length()==0)
-            {
-                return "o";
-            }
+            return "x";
         }
+        if(b.charAt(3)=='x'&&b.charAt(4)=='x'&&b.charAt(5)=='x')
+        {
+            return "x";
+        }
+        if(b.charAt(6)=='x'&&b.charAt(7)=='x'&&b.charAt(8)=='x')
+        {
+            return "x";
+        }
+
+        if(b.charAt(0)=='x'&&b.charAt(3)=='x'&&b.charAt(6)=='x')
+        {
+            return "x";
+        }
+        if(b.charAt(1)=='x'&&b.charAt(4)=='x'&&b.charAt(7)=='x')
+        {
+            return "x";
+        }
+        if(b.charAt(2)=='x'&&b.charAt(5)=='x'&&b.charAt(8)=='x')
+        {
+            return "x";
+        }
+
+        if(b.charAt(0)=='x'&&b.charAt(4)=='x'&&b.charAt(8)=='x')
+        {
+            return "x";
+        }
+        if(b.charAt(2)=='x'&&b.charAt(4)=='x'&&b.charAt(6)=='x')
+        {
+            return "x";
+        }
+
+        //Validate o
+        if(b.charAt(0)=='o'&&b.charAt(1)=='o'&&b.charAt(2)=='o')
+        {
+            return "o";
+        }
+        if(b.charAt(3)=='o'&&b.charAt(4)=='o'&&b.charAt(5)=='o')
+        {
+            return "o";
+        }
+        if(b.charAt(6)=='o'&&b.charAt(7)=='o'&&b.charAt(8)=='o')
+        {
+            return "o";
+        }
+
+        if(b.charAt(0)=='o'&&b.charAt(3)=='o'&&b.charAt(6)=='o')
+        {
+            return "o";
+        }
+        if(b.charAt(1)=='o'&&b.charAt(4)=='o'&&b.charAt(7)=='o')
+        {
+            return "o";
+        }
+        if(b.charAt(2)=='o'&&b.charAt(5)=='o'&&b.charAt(8)=='o')
+        {
+            return "o";
+        }
+
+        if(b.charAt(0)=='o'&&b.charAt(4)=='o'&&b.charAt(8)=='o')
+        {
+            return "o";
+        }
+        if(b.charAt(2)=='o'&&b.charAt(4)=='o'&&b.charAt(6)=='o')
+        {
+            return "o";
+        }
+
         if(!this.getLineBoard().contains("-"))
         {
             return "d";
