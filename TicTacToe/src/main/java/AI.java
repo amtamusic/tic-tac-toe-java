@@ -28,7 +28,7 @@ public class AI {
         backgroundTrainer.start();
     }
 
-    public void trainBrain(ArrayList<Integer>moves,ArrayList<Board>movesHistory)
+    public void trainBrain(ArrayList<Integer>moves,ArrayList<Board>movesHistory,int player)
     {
         int turn=0;
         String game;
@@ -36,7 +36,7 @@ public class AI {
         {
             if(move>=0) {
                 game = movesHistory.get(turn).getLineBoard();
-                brain.learn(game, move,true);
+                brain.learn(game, move,true,player);
             }
             turn++;
         }
@@ -46,7 +46,7 @@ public class AI {
     public void trainBrainLoss(ArrayList<Integer>moves,ArrayList<Board>movesHistory)
     {
                 String game = movesHistory.get(movesHistory.size()-2).getLineBoard();
-                brain.learn(game, moves.get(moves.size()-1),false);
+                brain.learnNN(game, moves.get(moves.size()-1),0);
     }
 
 
@@ -54,7 +54,7 @@ public class AI {
     {
         for(int i =0;i<testCases;i++)
         {
-            simulateGameBrain(true);
+            simulateGameBrain(true,this);
         }
         //System.out.println("Tests ran "+(testWinCounter+testLossCounter));
         currentPerformance=testWinCounter/testCases;
@@ -69,18 +69,60 @@ public class AI {
         {
             hash= new HashSet<>();
         }
-        return new ArrayList<>();
+        return new ArrayList<>(hash);
     }
 
-    public void simulateGameBrain(boolean isTest)
+    public  ArrayList<Integer> predictNN(String game,int player){
+        ArrayList<String> a = new ArrayList<>(Arrays.asList(game.split("")));
+        double[] f = new double[a.size()+1];
+        for(int i =0;i<a.size();i++){
+            f[i]=Double.parseDouble(a.get(i).replace("-","0").replace("x","1").replace("o","0"));
+        }
+        f[f.length-1]=player;
+        ArrayList<Integer> result = new ArrayList<>();
+        List<Double> output = brain.getNn().predict(f);
+        for(int i=0;i<9;i++)
+        {
+            if(output.get(i)>0.5){
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
+    public void simulateGameBrain(boolean isTest,AI ai)
     {
         Board board = new Board();
         String result;
+        String humanPlayer ="x";
+        board.setCurrentTurn(humanPlayer);
         while((result=board.validateWinner()).length()==0)
         {
-            boolean isValid = board.makeMove(board.currentTurn, new Random().nextInt(9));
-            while (!isValid) {
+            if(!board.getCurrentTurn().equals(humanPlayer)) {
+                ArrayList<Integer> moves = ai.predictNN(board.getLineBoard(), 0);
+                int choice = -1;
+                boolean isValid;
+                if (moves != null && !moves.isEmpty()) {
+                    //Double max= Collections.max(moves);
+                    choice = new Random().nextInt(moves.size());
+                    //choice = moves.indexOf(max);
+                    isValid = board.makeMove(board.currentTurn, moves.get(choice));
+                    moves.remove(choice);
+                } else {
                     isValid = board.makeMove(board.currentTurn, new Random().nextInt(9));
+                }
+                while (!isValid) {
+                    if (moves != null && !moves.isEmpty()) {
+                        choice = new Random().nextInt(moves.size());
+                        isValid = board.makeMove(board.currentTurn, moves.get(choice).intValue());
+                        moves.remove(choice);
+                    } else {
+                        isValid = board.makeMove(board.currentTurn, new Random().nextInt(9));
+                    }
+                }
+            }else
+            {
+
             }
         }
         if (result.equals("x")){
@@ -110,7 +152,7 @@ public class AI {
             //System.out.println(board.getMoveOHistory());
             if(isTraining && !isTest)
             {
-                trainBrain(board.getMoveOHistory(),board.boardHistory);
+                trainBrain(board.getMoveOHistory(),board.boardHistory,0);
                 if(trainingCounter<999999999) {
                     trainingCounter++;
                 }else
@@ -128,7 +170,7 @@ public class AI {
         {
             //System.out.println("Draw: "+board.getLineBoard()+board.moveOHistory+board.moveXHistory);
             //trainBrain(board.getMoveXHistory(),board.boardHistory);
-            trainBrain(board.getMoveOHistory(),board.boardHistory);
+            trainBrain(board.getMoveOHistory(),board.boardHistory,0);
             //System.out.println("It's a draw");
             if(isTest)
             {
@@ -166,9 +208,9 @@ public class AI {
 
     public void initTraining()
     {
-        while (trainingCounter<1000000)
+        while (trainingCounter<1000)
         {
-            simulateGameBrain(false);
+            simulateGameBrain(false,this);
         }
         //System.out.println("Training ran "+trainingCounter+" times.");
         //System.out.println("Current games in memory "+brain.getMemory().size());

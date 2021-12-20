@@ -30,12 +30,13 @@ public class Main {
         while((result=board.validateWinner()).length()==0)
         {
             if(!board.getCurrentTurn().equals(humanPlayer)) {
-
-                ArrayList<Integer>moves = ai.predictBrain(board.getLineBoard());
+                ArrayList<Integer>moves = ai.predictNN(board.getLineBoard(),0);
                 int choice = -1;
                 boolean isValid;
                 if(moves!=null && !moves.isEmpty()) {
+                    //Double max= Collections.max(moves);
                     choice = new Random().nextInt(moves.size());
+                    //choice = moves.indexOf(max);
                     isValid=board.makeMove(board.currentTurn,moves.get(choice));
                     moves.remove(choice);
                 }else
@@ -45,7 +46,7 @@ public class Main {
                 while (!isValid) {
                     if(moves!=null && !moves.isEmpty()) {
                         choice = new Random().nextInt(moves.size());
-                        isValid = board.makeMove(board.currentTurn,moves.get(choice));
+                        isValid = board.makeMove(board.currentTurn,moves.get(choice).intValue());
                         moves.remove(choice);
                     }
                     else{
@@ -66,20 +67,20 @@ public class Main {
         if (result.equals("x")){
             System.out.println("X won");
             System.out.println(board.getMoveXHistory());
-//            ai.trainBrain(board.getMoveXHistory(),board.getBoardHistory());
-//            if(ai.trainingCounter<999999999) {
-//                ai.trainingCounter++;
-//            }else
-//            {
-//                ai.trainingCounter=0;
-//                ai.overlap++;
-//            }
+            ai.trainBrain(board.getMoveXHistory(),board.getBoardHistory(),1);
+            if(ai.trainingCounter<999999999) {
+                ai.trainingCounter++;
+            }else
+            {
+                ai.trainingCounter=0;
+                ai.overlap++;
+            }
 
         }else if(result.equals("o"))
         {
             System.out.println("O won");
             System.out.println(board.getMoveOHistory());
-            ai.trainBrain(board.getMoveOHistory(),board.boardHistory);
+            ai.trainBrain(board.getMoveOHistory(),board.boardHistory,0);
             if(ai.trainingCounter<999999999) {
                 ai.trainingCounter++;
             }else
@@ -90,7 +91,7 @@ public class Main {
 
         }else if(result.equals("d"))
         {
-            ai.trainBrain(board.getMoveOHistory(),board.boardHistory);
+            ai.trainBrain(board.getMoveOHistory(),board.boardHistory,0);
             if(ai.trainingCounter<999999999) {
                 ai.trainingCounter++;
             }else
@@ -101,6 +102,7 @@ public class Main {
             System.out.println("It's a draw");
         }else
         {
+            //ai.trainBrainLoss(board.getMoveOHistory(),board.boardHistory);
             ai.trainBrainLoss(board.getMoveOHistory(),board.boardHistory);
             if(ai.trainingCounter<999999999) {
                 ai.trainingCounter++;
