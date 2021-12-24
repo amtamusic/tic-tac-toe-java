@@ -1,0 +1,53 @@
+@options
+@packages
+@argfile
+-classpath
+'C:/Users/amtam/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar'
+-encoding
+'UTF-8'
+-private
+-source
+'8'
+-sourcepath
+'C:/Users/amtam/Documents/AI/tic-tac-toe-java/TicTacToe/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2021. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'C:/Users/amtam/Documents/AI/tic-tac-toe-java/TicTacToe/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'TicTacToe 1.0-SNAPSHOT API'
+-linkoffline
+'https://docs.oracle.com/javase/8/docs/api' 'C:/Users/amtam/Documents/AI/tic-tac-toe-java/TicTacToe/target/javadoc-bundle-options'
+-nohelp
+-use
+-version
+-windowtitle
+'TicTacToe 1.0-SNAPSHOT API'
+andytech.ai
+andytech.game
+'C:/Users/amtam/Documents/AI/tic-tac-toe-java/TicTacToe/src/main/java/andytech/ai/AI.java'
+'C:/Users/amtam/Documents/AI/tic-tac-toe-java/TicTacToe/src/main/java/andytech/ai/Brain.java'
+'C:/Users/amtam/Documents/AI/tic-tac-toe-java/TicTacToe/src/main/java/andytech/game/Board.java'
+'C:/Users/amtam/Documents/AI/tic-tac-toe-java/TicTacToe/src/main/java/andytech/game/Main.java'
+'C:/Users/amtam/Documents/AI/tic-tac-toe-java/TicTacToe/src/main/java/andytech/game/Player.java'
+'C:/Users/amtam/Documents/AI/tic-tac-toe-java/TicTacToe/src/main/java/andytech/game/Space.java'
+C:\Users\amtam\.m2\repository\org\projectlombok\lombok\1.18.22\lombok-1.18.22.jar = 1636219316014
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\src\main\java = 1640349427294
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\target\site\apidocs\allclasses-frame.html = 1640350489695
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\target\site\apidocs\allclasses-noframe.html = 1640350489698
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\target\site\apidocs\constant-values.html = 1640350489479
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\target\site\apidocs\deprecated-list.html = 1640350489691
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\target\site\apidocs\index-all.html = 1640350489681
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\target\site\apidocs\index.html = 1640350489701
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\target\site\apidocs\overview-frame.html = 1640350489434
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\target\site\apidocs\overview-summary.html = 1640350489709
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\target\site\apidocs\overview-tree.html = 1640350489659
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\target\site\apidocs\package-list = 1640350489428
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\target\site\apidocs\script.js = 1640350489714
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\target\site\apidocs\serialized-form.html = 1640350489517
+C:\Users\amtam\Documents\AI\tic-tac-toe-java\TicTacToe\target\site\apidocs\stylesheet.css = 1640350446809

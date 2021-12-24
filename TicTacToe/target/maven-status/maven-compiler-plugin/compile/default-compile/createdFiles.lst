@@ -1,0 +1,7 @@
+andytech\game\Main.class
+andytech\game\Board.class
+andytech\game\Player.class
+andytech\ai\Brain.class
+andytech\game\Space.class
+andytech\ai\AI$BackgroundTrainer.class
+andytech\ai\AI.class

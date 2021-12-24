@@ -1,3 +1,5 @@
+import andytech.ai.AI;
+import andytech.game.Board;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -8,34 +10,34 @@ import static org.junit.Assert.assertEquals;
 public class AITest {
 
     @Test
-    public void trainBrainTest(){
+    public void trainBrainTest() {
         AI ai = new AI();
-        ArrayList<Integer> moves=new ArrayList(Arrays.asList(1));
+        ArrayList<Integer> moves = new ArrayList(Arrays.asList(1));
         Board board = new Board();
-        board.makeMove("x",1);
-        ArrayList<Board> boardHistory=new ArrayList<>();
+        board.makeMove("x", 1);
+        ArrayList<Board> boardHistory = new ArrayList<>();
         boardHistory.add(board);
-        ai.trainBrain(moves,boardHistory,0);
-        boolean in=false;
-        for (int i:ai.predictBrain(board.getLineBoard())){
-            if(i==1){
-                in=true;
+        ai.trainBrain(moves, boardHistory, 0);
+        boolean in = false;
+        for (int i : ai.predictBrain(board.getLineBoard())) {
+            if (i == 1) {
+                in = true;
             }
         }
-        assertEquals(true,in);
+        assertEquals(true, in);
     }
 
     @Test
-    public void testPerformance() throws InterruptedException {
+    public void testPerformance() {
         AI ai = new AI();
         ai.loadBrain();
         ai.initTraining();
         ai.initTest();
-        double perf = ai.currentPerformance;
-        boolean acceptable=(perf>0.8)?true:false;
-        boolean acceptableBest=(ai.bestPerformance>0)?true:false;
+        double perf = ai.getCurrentPerformance();
+        boolean acceptable = (perf > 0.7) ? true : false;
+        boolean acceptableBest = (ai.getBestPerformance() > 0) ? true : false;
         ai.saveBrain();
-        assertEquals(true,acceptable&&acceptableBest);
+        assertEquals(true, acceptable && acceptableBest);
     }
 
 }
