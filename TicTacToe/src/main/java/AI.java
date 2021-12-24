@@ -1,5 +1,6 @@
 import lombok.SneakyThrows;
 
+import java.io.*;
 import java.util.*;
 
 public class AI {
@@ -13,7 +14,7 @@ public class AI {
     Double testCases=100.0;
     Double testLossCounter=0.0;
     Double testWinCounter=0.0;
-    Brain brain;
+    public static Brain brain;
 
     public AI(int layers)
     {
@@ -45,8 +46,13 @@ public class AI {
 
     public void trainBrainLoss(ArrayList<Integer>moves,ArrayList<Board>movesHistory)
     {
-                String game = movesHistory.get(movesHistory.size()-2).getLineBoard();
-                brain.learnNN(game, moves.get(moves.size()-1),0);
+                String game = movesHistory.get(movesHistory.size()-3).getLineBoard();
+//                System.out.println(game);
+//                System.out.println(moves.get(moves.size()-1));
+                brain.learn(game, moves.get(moves.size()-1),false,0);
+//                game = movesHistory.get(movesHistory.size()-4).getLineBoard();
+//                brain.learn(game, moves.get(moves.size()-2),false,0);
+//                brain.learnNN(game, moves.get(moves.size()-1),0)
     }
 
 
@@ -99,7 +105,7 @@ public class AI {
         while((result=board.validateWinner()).length()==0)
         {
             if(!board.getCurrentTurn().equals(humanPlayer)) {
-                ArrayList<Integer> moves = ai.predictNN(board.getLineBoard(), 0);
+                ArrayList<Integer> moves = ai.predictBrain(board.getLineBoard());
                 int choice = -1;
                 boolean isValid;
                 if (moves != null && !moves.isEmpty()) {
@@ -122,7 +128,10 @@ public class AI {
                 }
             }else
             {
-
+                boolean isValid = board.makeMove(board.currentTurn, new Random().nextInt(9));
+                while (!isValid) {
+                    isValid = board.makeMove(board.currentTurn, new Random().nextInt(9));
+                }
             }
         }
         if (result.equals("x")){
@@ -130,15 +139,15 @@ public class AI {
             //System.out.println(board.getMoveXHistory());
             if(isTraining&&!isTest)
             {
-                //System.out.println("X win: "+board.getLineBoard()+board.moveOHistory+board.moveXHistory);
-              //  trainBrain(board.getMoveXHistory(),board.getBoardHistory());
-//                if(trainingCounter<999999999) {
-//                    trainingCounter++;
-//                }else
-//                {
-//                    trainingCounter=0;
-//                    overlap++;
-//                }
+//                System.out.println("X win: "+board.getLineBoard()+board.moveOHistory+board.moveXHistory);
+                trainBrainLoss(board.getMoveXHistory(),board.boardHistory);
+                if(trainingCounter<999999999) {
+                    trainingCounter++;
+                }else
+                {
+                    trainingCounter=0;
+                    overlap++;
+                }
 
             }
 
@@ -178,18 +187,18 @@ public class AI {
             }
         }else
         {
-            trainBrainLoss(board.getMoveOHistory(),board.boardHistory);
-            if(trainingCounter<999999999) {
-                trainingCounter++;
-            }else
-            {
-                trainingCounter=0;
-                overlap++;
-            }
-            if(isTest)
-            {
-                testLossCounter++;
-            }
+//            trainBrainLoss(board.getMoveOHistory(),board.boardHistory);
+//            if(trainingCounter<999999999) {
+//                trainingCounter++;
+//            }else
+//            {
+//                trainingCounter=0;
+//                overlap++;
+//            }
+//            if(isTest)
+//            {
+//                testLossCounter++;
+//            }
         }
         //board.printBoard();
         //board.printBoardHistory();
@@ -208,7 +217,7 @@ public class AI {
 
     public void initTraining()
     {
-        while (trainingCounter<1000)
+        while (trainingCounter<1000000)
         {
             simulateGameBrain(false,this);
         }
@@ -228,6 +237,35 @@ public class AI {
         public void run() {
             while(true)
             {initTrainingAndTesting();}
+        }
+    }
+
+    public boolean saveBrain(){
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("tictac.brain"));
+            oos.writeObject(this.brain);
+            oos.flush();
+            oos.close();
+            System.out.println("Saved Brain");
+            return true;
+        }catch (IOException e)
+        {
+            System.out.println("Error Saving Brain : "+e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean loadBrain(){
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream("tictac.brain"));
+            this.brain=(Brain)ois.readObject();
+            ois.close();
+            System.out.println("Loaded Brain");
+            return true;
+        }catch (IOException | ClassNotFoundException e)
+        {
+            System.out.println("Error Loading Brain : "+e.getMessage());
+            return false;
         }
     }
 }

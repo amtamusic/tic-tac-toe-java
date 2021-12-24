@@ -7,12 +7,15 @@ public class Main {
 
     public static void main(String[] args){
         ai = new AI(9);
+        ai.loadBrain();
         scanner = new Scanner(System.in);
         int menu=1;
         do {
-            if(menu==100)
-            {
+            if(menu==100) {
                 ai.initTrainingAndTesting();
+            }
+            if(menu==101) {
+                ai.saveBrain();
             }
             playGameBrain();
             System.out.println("Would you like to play again?");
@@ -30,7 +33,8 @@ public class Main {
         while((result=board.validateWinner()).length()==0)
         {
             if(!board.getCurrentTurn().equals(humanPlayer)) {
-                ArrayList<Integer>moves = ai.predictNN(board.getLineBoard(),0);
+                ArrayList<Integer>moves = ai.predictBrain(board.getLineBoard());
+                System.out.println("moves:"+moves.toString());
                 int choice = -1;
                 boolean isValid;
                 if(moves!=null && !moves.isEmpty()) {
@@ -57,17 +61,28 @@ public class Main {
             {
                 System.out.println("Make your move");
                 int input = scanner.nextInt();
+                input-=1;
                 while (!board.makeMove(board.currentTurn, input)){
                     System.out.println("Invalid move make a new one");
                     input = scanner.nextInt();
+                    input-=1;
                 }
             }
             board.printBoard();
         }
         if (result.equals("x")){
-            System.out.println("X won");
-            System.out.println(board.getMoveXHistory());
-            ai.trainBrain(board.getMoveXHistory(),board.getBoardHistory(),1);
+             System.out.println("X won");
+//            System.out.println(board.getMoveXHistory());
+//            ai.trainBrain(board.getMoveXHistory(),board.getBoardHistory(),1);
+//            if(ai.trainingCounter<999999999) {
+//                ai.trainingCounter++;
+//            }else
+//            {
+//                ai.trainingCounter=0;
+//                ai.overlap++;
+//            }
+            //ai.trainBrainLoss(board.getMoveOHistory(),board.boardHistory);
+            ai.trainBrainLoss(board.getMoveXHistory(),board.boardHistory);
             if(ai.trainingCounter<999999999) {
                 ai.trainingCounter++;
             }else
@@ -103,14 +118,14 @@ public class Main {
         }else
         {
             //ai.trainBrainLoss(board.getMoveOHistory(),board.boardHistory);
-            ai.trainBrainLoss(board.getMoveOHistory(),board.boardHistory);
-            if(ai.trainingCounter<999999999) {
-                ai.trainingCounter++;
-            }else
-            {
-                ai.trainingCounter=0;
-                ai.overlap++;
-            }
+//            ai.trainBrainLoss(board.getMoveOHistory(),board.boardHistory);
+//            if(ai.trainingCounter<999999999) {
+//                ai.trainingCounter++;
+//            }else
+//            {
+//                ai.trainingCounter=0;
+//                ai.overlap++;
+//            }
         }
         board.printBoard();
         //board.printBoardHistory();

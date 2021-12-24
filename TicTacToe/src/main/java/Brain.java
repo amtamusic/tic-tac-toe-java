@@ -2,19 +2,20 @@ import ai.NeuralNetwork;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.*;
 
 @Data
-public class Brain {
+public class Brain implements Serializable {
     HashMap<String, HashSet<Integer>>memoryOffensive;
     HashMap<String, HashSet<Integer>>memoryDefensive;
     NeuralNetwork nn;
-    Boolean useNN=true;
+    Boolean useNN=false;
     public Brain()
     {
         this.memoryOffensive=new HashMap<>();
         this.memoryDefensive=new HashMap<>();
-        this.nn=new NeuralNetwork(10, 10, 10);
+        this.nn=new NeuralNetwork(10, 5, 10);
     }
 
     public void learn(String game, int move,boolean isOffense,int player)

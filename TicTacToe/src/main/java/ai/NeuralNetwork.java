@@ -1,10 +1,11 @@
 package ai;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class NeuralNetwork {
+public class NeuralNetwork implements Serializable {
     Matrix weights_ih , weights_ho , bias_h , bias_o;
-    double l_rate=0.03;
+    double l_rate=0.05;
 
     public NeuralNetwork(int i,int h,int o) {
         weights_ih = new Matrix(h,i);

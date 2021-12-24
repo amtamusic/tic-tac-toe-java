@@ -2,11 +2,12 @@ package ai;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class Matrix
+public class Matrix implements Serializable
 {
     double [][]data;
     int rows,cols;
