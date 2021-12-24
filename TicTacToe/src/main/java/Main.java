@@ -8,19 +8,29 @@ public class Main {
     public static AI ai;
 
     public static void main(String[] args) {
+       mainMenu();
+    }
+
+    public static void mainMenu()
+    {
         ai = new AI();
         ai.loadBrain();
         scanner = new Scanner(System.in);
-        int menu = 1;
+        int menu = 102;
         do {
             if (menu == 100) {
                 ai.initTrainingAndTesting();
             }
-            if (menu == 101) {
+            else if (menu == 101) {
                 ai.saveBrain();
             }
-            playGameBrain();
-            System.out.println("Would you like to play again?");
+            else if (menu == 102) {
+                ai.printCurrentPerformance();
+            }
+            else{
+                playGameBrain();
+                System.out.println("Would you like to play again?");
+            }
             menu = scanner.nextInt();
         }
         while (menu != 1000);
@@ -77,7 +87,6 @@ public class Main {
 
         } else if (result.equals("o")) {
             System.out.println("O won");
-            System.out.println(board.getMoveOHistory());
             ai.trainBrain(board.getMoveOHistory(), board.boardHistory, 0);
             if (ai.trainingCounter < 999999999) {
                 ai.trainingCounter++;

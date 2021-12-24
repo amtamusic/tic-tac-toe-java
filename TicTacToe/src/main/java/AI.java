@@ -7,17 +7,24 @@ public class AI {
 
     public static Brain brain;
     boolean isTraining;
-    long trainingCounter = 0;
-    long overlap = 0;
-    Double bestPerformance = 0.0;
-    Double currentPerformance = 0.0;
-    Double testCases = 100.0;
-    Double testLossCounter = 0.0;
-    Double testWinCounter = 0.0;
+    long trainingCounter;
+    long overlap;
+    Double bestPerformance;
+    Double currentPerformance;
+    Double testCases;
+    Double testLossCounter;
+    Double testWinCounter;
 
     public AI() {
         brain = new Brain();
         this.isTraining = true;
+        this.trainingCounter = 0;
+        this.overlap = 0;
+        this.bestPerformance = 0.0;
+        this.currentPerformance = 0.0;
+        this.testCases = 100.0;
+        this.testLossCounter = 0.0;
+        this.testWinCounter = 0.0;
         BackgroundTrainer backgroundTrainer = new BackgroundTrainer();
         backgroundTrainer.start();
     }
@@ -131,7 +138,6 @@ public class AI {
         if (currentPerformance > bestPerformance) {
             bestPerformance = currentPerformance;
         }
-        System.out.println("Current perf:" + bestPerformance);
     }
 
     public void initTraining() {
@@ -180,5 +186,9 @@ public class AI {
                 initTrainingAndTesting();
             }
         }
+    }
+
+    public void printCurrentPerformance(){
+        System.out.println("Current perf:" + bestPerformance);
     }
 }
