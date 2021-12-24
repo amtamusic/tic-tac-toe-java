@@ -5,12 +5,12 @@ import lombok.ToString;
 @ToString
 public class Space {
     String value;
-    public Space()
-    {
-        this.value="";
+
+    public Space() {
+        this.value = "";
     }
-    public Space(String value)
-    {
-        this.value=value;
+
+    public Space(String value) {
+        this.value = value;
     }
 }
